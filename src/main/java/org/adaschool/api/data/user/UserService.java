@@ -1,5 +1,7 @@
 package org.adaschool.api.data.user;
 
+import org.adaschool.api.data.user.UserEntity;
+
 import java.util.Optional;
 
 public interface UserService {

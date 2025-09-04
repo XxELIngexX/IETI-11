@@ -4,10 +4,13 @@ package org.adaschool.api.controller.user;
 import jakarta.annotation.security.RolesAllowed;
 import org.adaschool.api.data.user.RoleEnum;
 import org.adaschool.api.data.user.UserEntity;
-import org.adaschool.api.data.user.UserService;
+import org.adaschool.api.data.user.UserServiceJPA;
+import org.adaschool.api.exception.UserWithEmailAlreadyRegisteredException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 import static org.adaschool.api.utils.Constants.ADMIN_ROLE;
 
@@ -15,12 +18,11 @@ import static org.adaschool.api.utils.Constants.ADMIN_ROLE;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-
-    private final UserService userService;
+    private final UserServiceJPA userService;
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserServiceJPA userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         loadSampleUsers();
@@ -38,20 +40,34 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable String id) {
-        return ResponseEntity.ok(null);
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserDto userDto) {
+    @PostMapping("/add")
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity UserEntity) {
+        UserEntity usuario = userService.findByEmail(UserEntity.getEmail()).orElse(null);
 
-        return ResponseEntity.ok(null);
+        if (usuario == null) {
+            usuario = userService.save(UserEntity);
+        }else {
+            throw new UserWithEmailAlreadyRegisteredException();
+        }
+        System.out.println(usuario);
+        return ResponseEntity.ok(usuario);
     }
 
     @RolesAllowed(ADMIN_ROLE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable String id) {
-
-        return ResponseEntity.ok(false);
+        UserEntity user = userService.findById(id).orElse(null);
+        if (user != null) {
+            userService.delete(user);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(true);
 
     }
 

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.adaschool.api.controller.auth.TokenDto;
 import org.adaschool.api.data.user.RoleEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -15,13 +16,13 @@ import static org.adaschool.api.utils.Constants.CLAIMS_ROLES_KEY;
 @Component
 public class JwtUtil {
 
-    private final JwtConfig jwtConfig;
-
+    private  JwtConfig jwtConfig;
+    @Autowired
     public JwtUtil(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
 
-    public TokenDto generateToken(String username, List<RoleEnum> roles) {
+    public  TokenDto generateToken(String username, List<RoleEnum> roles) {
 
         Date expirationDate = jwtConfig.getExpirationDate();
         String token = Jwts.builder().subject(username)

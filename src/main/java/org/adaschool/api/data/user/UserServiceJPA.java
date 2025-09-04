@@ -1,15 +1,16 @@
 package org.adaschool.api.data.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserServiceJPA implements UserService {
+    private UserRepository userRepository;
 
-    final UserRepository userRepository;
 
-
+    @Autowired
     public UserServiceJPA(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -26,7 +27,8 @@ public class UserServiceJPA implements UserService {
 
     @Override
     public UserEntity save(UserEntity user) {
-        return userRepository.save(user);
+        UserEntity userEntity = userRepository.save(user);
+        return userEntity;
     }
 
     @Override

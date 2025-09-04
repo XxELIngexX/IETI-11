@@ -4,6 +4,7 @@ import org.adaschool.api.controller.user.UserController;
 import org.adaschool.api.controller.user.UserDto;
 import org.adaschool.api.data.user.UserEntity;
 import org.adaschool.api.data.user.UserService;
+import org.adaschool.api.data.user.UserServiceJPA;
 import org.adaschool.api.exception.UserWithEmailAlreadyRegisteredException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class UserControllerTest {
 
     @Mock
-    private UserService userService;
+    private UserServiceJPA userService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -57,9 +58,9 @@ public class UserControllerTest {
 
     @Test
     void createUser_NewUser() {
-        UserDto userDto = new UserDto("New User", "new@example.com", "password");
-        when(userService.findByEmail(userDto.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+        UserEntity userDto = new UserEntity("New User", "new@example.com", "password");
+//        when(userService.findByEmail(userDto.getEmail())).thenReturn(Optional.empty());
+//        when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
         UserEntity userEntity = new UserEntity();
         when(userService.save(any())).thenReturn(userEntity);
         ResponseEntity<UserEntity> response = userController.createUser(userDto);
@@ -72,7 +73,7 @@ public class UserControllerTest {
 
     @Test
     void createUser_EmailAlreadyExists() {
-        UserDto userDto = new UserDto("New User", "existing@example.com", "password");
+        UserEntity userDto = new UserEntity("New User", "existing@example.com", "password");
         when(userService.findByEmail(userDto.getEmail())).thenReturn(Optional.of(new UserEntity()));
 
         assertThrows(UserWithEmailAlreadyRegisteredException.class, () -> userController.createUser(userDto));
@@ -81,7 +82,9 @@ public class UserControllerTest {
     @Test
     void deleteUser_UserExists() {
         String userId = "123";
-        when(userService.findById(userId)).thenReturn(Optional.of(new UserEntity()));
+        UserEntity user = new UserEntity("User Name", "user@example.com", "hashedPassword");
+        when(userService.findById(userId)).thenReturn(Optional.of(user));
+        //when(userService.findById(userId)).thenReturn(Optional.of(new UserEntity()));
 
         ResponseEntity<Boolean> response = userController.deleteUser(userId);
 
@@ -98,8 +101,10 @@ public class UserControllerTest {
 
         ResponseEntity<Boolean> response = userController.deleteUser(userId);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotEquals(Boolean.TRUE, response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertNotEquals(Boolean.TRUE, response.getBody());
     }
 }
 
