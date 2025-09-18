@@ -1,13 +1,13 @@
-package com.example.IETI_11;
+package org.adaschool.Weather;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Ieti11Application {
+public class WeatherApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Ieti11Application.class, args);
+		SpringApplication.run(WeatherApplication.class, args);
 	}
 
 }
