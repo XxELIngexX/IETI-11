@@ -8,16 +8,18 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+    private String password;
     private UsersService usersService = new UsersService();
 
     // Constructor
     public User() {}
-    public User(String id, String name, String lastName, String email, String phone) {
+    public User(String id, String name, String lastName, String email, String phone, String password) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
+        this.password = password;
     }
     public User(UserDto dto) {
         this.id = String.valueOf((usersService.getAllUsers().size() + 1));
@@ -25,6 +27,7 @@ public class User {
         this.lastName = dto.getLastName();
         this.email = dto.getEmail();
         this.phone = dto.getPhone();
+        this.password = dto.getPassword();
     }
 
     // Getters and setters

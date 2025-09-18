@@ -7,6 +7,7 @@ import com.example.IETI_11.model.User;
 import com.example.IETI_11.service.UsersService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,11 +24,11 @@ public class UsersController {
 
     @PostMapping("/")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        User ignore = usersService.save(user);
+        User ignore = usersService.crete(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
     @GetMapping("/")
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return usersService.getAllUsers();
     }
     @GetMapping("/{id}")
@@ -37,16 +38,7 @@ public class UsersController {
     }
     @PutMapping("/{id}")
     public void updateUser(@PathVariable String id, @RequestBody User user) {
-        User currentUser = usersService.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        // copiamos los valores del nuevo user al existente
-        currentUser.setName(user.getName());
-        currentUser.setLastName(user.getLastName());
-        currentUser.setEmail(user.getEmail());
-        currentUser.setPhone(user.getPhone());
-
-        usersService.save(currentUser);
+        usersService.updateUser(id,user);
     }
 
     @DeleteMapping("/{id}")

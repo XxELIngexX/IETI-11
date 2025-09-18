@@ -6,12 +6,14 @@ public class UserDto {
     private String lastName;
     private String email;
     private String phone;
+    private String password;
 
-    public UserDto(String name, String lastName, String email, String phoneNumber) {
+    public UserDto(String name, String lastName, String email, String phoneNumber, String password) {
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.phone = phoneNumber;
+        this.password = password;
     }
 
     public String getName() {
@@ -28,6 +30,10 @@ public class UserDto {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
 

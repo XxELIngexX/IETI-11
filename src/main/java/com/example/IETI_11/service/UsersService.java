@@ -1,48 +1,46 @@
 package com.example.IETI_11.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.example.IETI_11.exeption.UserNotFoundException;
 import com.example.IETI_11.model.User;
+import com.example.IETI_11.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsersService {
+    @Autowired
+    private UserRepository userRepository;
 
-    private ArrayList<User> users = new ArrayList<>();
-
-    public User save(User user) {
-        users.add(user);
+    public User create(User user) {
+        userRepository.save(user);
         return user;
     }
 
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
 
-        return users;
+        return userRepository.findAll();
     }
 
     public Optional<User> findById(String id) {
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return Optional.of(user);
-            }
-        }
-        return Optional.empty(); // User not found
+        return userRepository.findById(id);
     }
     public void updateUser(String id, User user) {
-        User currentUser = findById(id).get();
-        if (currentUser != null){
-            currentUser = user;
-            save(currentUser);
-        }
-        else {
-            throw new UserNotFoundException("User not found");
-        }
+        Optional<User> old = userRepository.findById(id);
+        old = Optional.ofNullable(user);
+        userRepository.save(old.orElse(user));
+
     }
     public void deleteById(String id) {
-        users.remove(findById(id).get());
+
+        userRepository.deleteById(id);
     }
 
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
